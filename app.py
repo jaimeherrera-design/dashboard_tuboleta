@@ -54,6 +54,9 @@ st.markdown(f"""
 .hdr h1 {{margin:0; padding:0; font-size:24px; font-weight:800; color:{NAVY}; line-height:1.15; white-space:nowrap}}
 .hdr h1 span {{color:{AZUL}}}
 .hdr p {{margin:2px 0 0; font-size:15px; font-weight:600; color:#5B6B80}}
+.st-key-filtros {{background:#fff; border:1px solid #DDE3EA; border-radius:10px; padding:8px 14px 10px; margin:10px 0 4px}}
+.ft {{display:flex; align-items:center; gap:8px; background:{NAVY}; color:#fff; font-weight:700; font-size:14px;
+        border-radius:8px; padding:9px 12px; margin-bottom:2px}}
 [data-testid="stWidgetLabel"] p {{font-size:11px !important; color:#6B7A90 !important; font-weight:600}}
 [data-baseweb="select"] > div {{background:#fff; border-color:#D5DCE5; border-radius:8px; min-height:38px}}
 [data-baseweb="tag"] {{background:{AZUL} !important}}
@@ -328,16 +331,19 @@ SKILL_DE = df.groupby("tipificacion")["skill"].first()
 meses = list(pd.DatetimeIndex(df["mes"].unique()).sort_values())
 logo_b64 = base64.b64encode(LOGO.read_bytes()).decode()
 
-h0, h1, h2, h3, h4 = st.columns([3.6, 1, 1.1, 1.6, 1.1], vertical_alignment="bottom")
-h0.markdown(f'<div class="hdr"><img src="data:image/png;base64,{logo_b64}"><div class="sep"></div><div>'
+st.markdown(f'<div class="hdr"><img src="data:image/png;base64,{logo_b64}"><div class="sep"></div><div>'
             '<h1>Analítica de Datos &amp; <span>Visibilidad Operativa</span></h1>'
             '<p>Control 360° de la línea inbound · Agente Virtual + Asesores</p></div></div>',
             unsafe_allow_html=True)
-f_mes = h1.selectbox("Mes", ["Todos"] + meses, format_func=lambda m: m if m == "Todos" else mes_lbl(m))
-f_skill = h2.multiselect("Skill", ["SAC", "PQRS", "Venta"], placeholder="Todos")
-opc_tip = df[df["skill"].isin(f_skill)] if f_skill else df
-f_tip = h3.multiselect("Tipificación", opc_tip["tipificacion"].value_counts().index.tolist(), placeholder="Todas")
-f_canal = h4.selectbox("Canal", ["Todos", VIRTUAL, HUMANO])
+with st.container(key="filtros"):
+    h0, h1, h2, h3, h4 = st.columns([.9, 1.2, 1.6, 2.6, 1.6], vertical_alignment="bottom")
+    h0.markdown(f'<div class="ft">{ico("bars", "#fff", 18)}Filtros</div>', unsafe_allow_html=True)
+    f_mes = h1.selectbox("Mes", ["Todos"] + meses, format_func=lambda m: m if m == "Todos" else mes_lbl(m))
+    f_skill = h2.multiselect("Skill", ["SAC", "PQRS", "Venta"], placeholder="Todos")
+    opc_tip = df[df["skill"].isin(f_skill)] if f_skill else df
+    f_tip = h3.multiselect("Tipificación", opc_tip["tipificacion"].value_counts().index.tolist(),
+                           placeholder="Todas")
+    f_canal = h4.selectbox("Canal", ["Todos", VIRTUAL, HUMANO])
 periodo = "Jul – Sep 2026" if f_mes == "Todos" else mes_lbl(f_mes)
 
 CON_CONT = f_canal == "Todos"
