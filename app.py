@@ -293,7 +293,7 @@ def grafico(fig, alto=300):
 
 def tabla(disp: pd.DataFrame, est: pd.DataFrame):
     sty = disp.style.apply(lambda _: est.replace(CSS_EST), axis=None)
-    st.dataframe(sty, hide_index=True, width="stretch")
+    st.dataframe(sty, hide_index=True, width="stretch", height=300)
 
 
 COLS_KPI = [("Nivel de Servicio", "ns", pct), ("Nivel de Atención", "cr", pct), ("% Abandono", "abp", pct),
