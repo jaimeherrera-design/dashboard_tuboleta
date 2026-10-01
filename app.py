@@ -55,6 +55,10 @@ st.markdown(f"""
 .hdr h1 span {{color:{AZUL}}}
 .hdr p {{margin:2px 0 0; font-size:15px; font-weight:600; color:#5B6B80}}
 .st-key-filtros {{background:#fff; border:1px solid #DDE3EA; border-radius:10px; padding:8px 14px 10px; margin:10px 0 4px}}
+[data-testid="stPopover"] button {{background:{NAVY}; color:#fff; border:none; border-radius:8px; font-weight:700}}
+[data-testid="stPopover"] button p {{color:#fff}}
+[data-testid="stPopoverBody"] {{min-width:360px}}
+.fact {{font-size:12px; color:#5B6B80; margin:8px 0 2px}} .fact b {{color:{NAVY}}}
 .ft {{display:flex; align-items:center; gap:8px; background:{NAVY}; color:#fff; font-weight:700; font-size:14px;
         border-radius:8px; padding:9px 12px; margin-bottom:2px}}
 [data-testid="stWidgetLabel"] p {{font-size:11px !important; color:#6B7A90 !important; font-weight:600}}
@@ -331,20 +335,23 @@ SKILL_DE = df.groupby("tipificacion")["skill"].first()
 meses = list(pd.DatetimeIndex(df["mes"].unique()).sort_values())
 logo_b64 = base64.b64encode(LOGO.read_bytes()).decode()
 
-st.markdown(f'<div class="hdr"><img src="data:image/png;base64,{logo_b64}"><div class="sep"></div><div>'
-            '<h1>Analítica de Datos &amp; <span>Visibilidad Operativa</span></h1>'
-            '<p>Control 360° de la línea inbound · Agente Virtual + Asesores</p></div></div>',
-            unsafe_allow_html=True)
-with st.container(key="filtros"):
-    h0, h1, h2, h3, h4 = st.columns([.9, 1.2, 1.6, 2.6, 1.6], vertical_alignment="bottom")
-    h0.markdown(f'<div class="ft">{ico("bars", "#fff", 18)}Filtros</div>', unsafe_allow_html=True)
-    f_mes = h1.selectbox("Mes", ["Todos"] + meses, format_func=lambda m: m if m == "Todos" else mes_lbl(m))
-    f_skill = h2.multiselect("Skill", ["SAC", "PQRS", "Venta"], placeholder="Todos")
+hc1, hc2 = st.columns([5, 1], vertical_alignment="center")
+hc1.markdown(f'<div class="hdr"><img src="data:image/png;base64,{logo_b64}"><div class="sep"></div><div>'
+             '<h1>Analítica de Datos &amp; <span>Visibilidad Operativa</span></h1>'
+             '<p>Control 360° de la línea inbound · Agente Virtual + Asesores</p></div></div>',
+             unsafe_allow_html=True)
+with hc2.popover("Filtros", icon=":material/filter_alt:", width="stretch"):
+    f_mes = st.selectbox("Mes", ["Todos"] + meses, format_func=lambda m: m if m == "Todos" else mes_lbl(m))
+    f_skill = st.multiselect("Skill", ["SAC", "PQRS", "Venta"], placeholder="Todos")
     opc_tip = df[df["skill"].isin(f_skill)] if f_skill else df
-    f_tip = h3.multiselect("Tipificación", opc_tip["tipificacion"].value_counts().index.tolist(),
+    f_tip = st.multiselect("Tipificación", opc_tip["tipificacion"].value_counts().index.tolist(),
                            placeholder="Todas")
-    f_canal = h4.selectbox("Canal", ["Todos", VIRTUAL, HUMANO])
+    f_canal = st.selectbox("Canal", ["Todos", VIRTUAL, HUMANO])
 periodo = "Jul – Sep 2026" if f_mes == "Todos" else mes_lbl(f_mes)
+activos = [x for x in [None if f_mes == "Todos" else mes_lbl(f_mes), ", ".join(f_skill), ", ".join(f_tip[:3])
+                       + ("…" if len(f_tip) > 3 else ""), None if f_canal == "Todos" else f_canal] if x]
+st.markdown(f'<div class="fact">Filtros activos: <b>{" · ".join(activos) if activos else "Ninguno (todo el periodo)"}'
+            '</b></div>', unsafe_allow_html=True)
 
 CON_CONT = f_canal == "Todos"
 AG_OK = f_canal != VIRTUAL
