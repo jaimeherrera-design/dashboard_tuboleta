@@ -93,8 +93,10 @@ st.markdown(f"""
 .ag-top b {{font-size:30px; color:{NAVY}}} .ag-top span {{font-size:12px; color:#6B7A90; margin-left:6px}}
 .ag-bar {{display:flex; height:46px; border-radius:6px; overflow:hidden; font-size:12px; font-weight:700}}
 .ag-bar div {{display:flex; align-items:center; justify-content:center; color:#fff}}
-.ag-leg {{display:grid; grid-template-columns:repeat(5,1fr); margin-top:10px; text-align:center; font-size:11px; color:#5B6B80}}
-.ag-leg b {{display:block; font-size:16px; color:{NAVY}}}
+.ag-leg {{display:grid; grid-template-columns:repeat(5,1fr); gap:4px; margin:12px 0 18px; text-align:center;
+        font-size:10.5px; color:#5B6B80}}
+.ag-leg > div {{white-space:nowrap}}
+.ag-leg b {{display:block; font-size:15px; color:{NAVY}; margin-top:4px}}
 .dot {{display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:4px}}
 .ql {{display:flex; align-items:center; justify-content:space-between; padding:9px 4px; border-bottom:1px solid #EEF1F5;
         font-size:13px; color:#41536B}}
